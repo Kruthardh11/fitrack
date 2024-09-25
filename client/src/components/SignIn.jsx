@@ -43,25 +43,30 @@ const SignIn = () => {
     setLoading(true);
     setButtonDisabled(true);
     if (validateInputs()) {
-      await UserSignIn({ email, password })
-        .then((res) => {
+      try {
+        const res = await UserSignIn({ email, password });
+        if (res && res.data) {
           dispatch(loginSuccess(res.data));
           alert("Login Success");
-          setLoading(false);
-          setButtonDisabled(false);
-        })
-        .catch((err) => {
-          alert(err.response.data.message);
-          setLoading(false);
-          setButtonDisabled(false);
-        });
+        } else {
+          alert("Unexpected response from server");
+        }
+      } catch (err) {
+        alert(err.response?.data?.message || "An error occurred");
+      } finally {
+        setLoading(false);
+        setButtonDisabled(false);
+      }
+    } else {
+      setLoading(false);
+      setButtonDisabled(false);
     }
   };
 
   return (
     <Container>
       <div>
-        <Title>Welcome to Fittrack 👋</Title>
+        <Title>Welcome to Fitrack 👋</Title>
         <Span>Please login with your details here</Span>
       </div>
       <div

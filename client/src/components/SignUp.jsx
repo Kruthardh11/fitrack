@@ -44,18 +44,20 @@ const SignUp = () => {
     setLoading(true);
     setButtonDisabled(true);
     if (validateInputs()) {
-      await UserSignUp({ name, email, password })
-        .then((res) => {
+      try {
+        const res = await UserSignUp({ name, email, password });
+        if (res && res.data) {
           dispatch(loginSuccess(res.data));
           alert("Account Created Success");
-          setLoading(false);
-          setButtonDisabled(false);
-        })
-        .catch((err) => {
-          alert(err.response.data.message);
-          setLoading(false);
-          setButtonDisabled(false);
-        });
+        } else {
+          alert("Unexpected response from server");
+        }
+      } catch (err) {
+        alert(err.response?.data?.message || "An error occurred");
+      } finally {
+        setLoading(false);
+        setButtonDisabled(false);
+      }
     }
   };
   return (
